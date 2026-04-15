@@ -1,10 +1,12 @@
 # Data files
 *.xlsx
 *.xls
+*.csv
 *.nc
 *.zip
 *.h5
 *.hdf5
+
 
 # Python
 __pycache__/
