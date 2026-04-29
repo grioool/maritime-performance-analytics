@@ -50,8 +50,9 @@ Primary questions:
 
 Recent updates implemented in `eda/feature_engineering.ipynb` and consumed in `ml/baseline_model.ipynb`:
 
-- Lag features (voyage-grouped):
+- Lag features (voyage-grouped and target-safe):
 	- `Speed_kn_lag1`, `Speed_kn_lag2`, `Speed_kn_mean3`
+	- `Speed_kn_mean3` is shifted first, so it uses only previous observations and never includes the current target row
 - Apparent wind features:
 	- `Apparent_Wind_Speed_ms`, apparent wind direction, apparent relative angle
 - Circular angle encoding:
@@ -70,6 +71,9 @@ The workflow now enforces:
 	- no temporal leakage between train/test voyage groups
 - No direct target leakage features:
 	- do not use `STW`, `AWS`, `AWA` as model features
+- Model goals are separated:
+	- weather-only explanatory model excludes target-history features
+	- lagged nowcast model uses previous observed SOG and apparent-wind context for short-horizon prediction
 - Rotor contribution is applied post-prediction (scenario step), not as a training feature
 
 ## Models and Current Results
@@ -92,20 +96,31 @@ Model performance:
 	- RMSE 1.860
 	- R2 0.034
 	- within +/-1 kn: 49.5%
-- M1 XGBoost (extended features):
-	- MAE 0.111
-	- RMSE 0.162
-	- R2 0.993
-	- within +/-1 kn: 99.9%
+- M1 XGBoost (weather-only):
+	- MAE 1.468
+	- RMSE 1.883
+	- R2 0.010
+	- within +/-1 kn: 41.7%
+- M2 XGBoost (lagged nowcast):
+	- MAE 0.406
+	- RMSE 0.758
+	- R2 0.839
+	- within +/-1 kn: 91.7%
 
 Top feature importances (latest run):
-- `Speed_kn_mean3`
-- `Speed_kn_lag1`
-- `Speed_kn_lag2`
-- followed by `Course_deg` and interaction/current features
+- M1 weather-only:
+	- `Course_deg`
+	- `current_x_course_help`
+	- `wind_speed_sq`
+	- wind-angle/current/wave features
+- M2 lagged nowcast:
+	- `Speed_kn_lag1`
+	- `Speed_kn_mean3`
+	- followed by `Course_deg`, `Speed_kn_lag2`, and apparent-wind features
 
 Interpretation note:
-- The strongest predictive signal currently comes from lagged speed terms (short-horizon trajectory memory).
+- The strongest predictive signal in the nowcast model comes from lagged speed terms.
+- Weather-only features alone explain little test-set variance under the current formulation, so weather-impact interpretation should be treated separately from short-horizon prediction.
 
 ## Rotor What-If and Weather Windows
 
@@ -120,17 +135,17 @@ Weather-window definition used:
 
 Weather-window results:
 - Without rotor:
-	- windows: 754
-	- points in window: 27,155
-	- coverage: 75.9%
+	- windows: 866
+	- points in window: 27,167
+	- coverage: 76.0%
 - With rotor:
-	- windows: 711
-	- points in window: 27,734
-	- coverage: 77.6%
+	- windows: 808
+	- points in window: 27,696
+	- coverage: 77.5%
 - Delta:
-	- windows: -43
-	- points: +579
-	- coverage: +1.6%
+	- windows: -58
+	- points: +529
+	- coverage: +1.5%
 
 Note:
 - Fewer windows with higher coverage suggests many windows become longer/merged when rotor uplift is applied.
