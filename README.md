@@ -2,7 +2,7 @@
 
 Maritime Performance Analytics evaluates vessel Speed Over Ground (SOG) under metocean conditions and quantifies the operational impact of wind-assisted propulsion (Flettner rotors), with emphasis on North Sea operations.
 
-## What Is Implemented
+## What is implemented
 
 This repository currently includes a complete notebook pipeline:
 
@@ -13,7 +13,7 @@ This repository currently includes a complete notebook pipeline:
 5. Weather-window comparison (baseline vs rotor-assisted)
 6. Four extension analyses (energy/fuel/CO₂, route segmentation, route optimisation, rotor gain detection)
 
-## Current Repository Structure
+## Current repository structure
 
 ```text
 maritime-performance-analytics/
@@ -41,7 +41,7 @@ maritime-performance-analytics/
 └── README.md
 ```
 
-## Modeling Goal
+## Modeling goal
 
 Predict SOG as a function of forecast-available conditions and observed trajectory context.
 
@@ -53,7 +53,7 @@ Primary questions:
 - Under what conditions does rotor assistance improve operational performance?
 - Do rotors expand useful weather-window coverage?
 
-## Key Engineering Updates
+## Essential engineering updates
 
 Recent updates implemented in `eda/feature_engineering.ipynb` and consumed in `ml/baseline_model.ipynb`:
 
@@ -69,7 +69,7 @@ Recent updates implemented in `eda/feature_engineering.ipynb` and consumed in `m
 - Interaction features:
 	- wind-angle, apparent-wind-angle, wind-wave, nonlinear wind/wave terms
 
-## Leakage and Validation Rules
+## Validation rules
 
 The workflow now enforces:
 
@@ -83,7 +83,7 @@ The workflow now enforces:
 	- lagged nowcast model uses previous observed SOG and apparent-wind context for short-horizon prediction
 - Rotor contribution is applied post-prediction (scenario step), not as a training feature
 
-## Models and Current Results
+## Models and current results
 
 From the latest full run of `ml/baseline_model.ipynb`:
 
@@ -129,7 +129,7 @@ Interpretation note:
 - The strongest predictive signal in the nowcast model comes from lagged speed terms.
 - Weather-only features alone explain little test-set variance under the current formulation, so weather-impact interpretation should be treated separately from short-horizon prediction.
 
-## Rotor What-If and Weather Windows
+## Rotor what-if and weather windows
 
 Rotor scenario (latest run):
 - Rotor active share: 98.1%
@@ -170,11 +170,11 @@ Four optional extension notebooks in `extensions/` build on the baseline pipelin
 
 All extensions read from `data/MasterSet_features.csv` and use the same rotor polar diagram and voyage-based split as the baseline model.
 
-## Known Caveat
+## Known caveat
 
 Current exported feature file `data/MasterSet_features.csv` includes `Course_deg` but does not currently export `course_sin` and `course_cos`. The model currently uses `Course_deg` directly.
 
-## How To Run
+## How to run
 
 Recommended notebook order:
 
@@ -192,7 +192,7 @@ Environment notes:
 - Python libraries used include: `pandas`, `numpy`, `scikit-learn`, `xgboost`, `matplotlib`, `seaborn`, `scipy`, `openpyxl`
 - On macOS, XGBoost may require OpenMP runtime (`libomp`)
 
-## Data and Security Notice
+## Data and security notice
 
 This repository should contain only code, notebooks, and reproducible workflows.
 
