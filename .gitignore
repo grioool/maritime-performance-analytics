@@ -26,6 +26,13 @@ env/
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
+# LaTeX report build artifacts
+latex/report/*
+!latex/report/main.tex
+!latex/report/main.pdf
+!latex/report/small_main.tex
+!latex/report/small_main.pdf
+
 # IDE
 .idea/
 .vscode/
