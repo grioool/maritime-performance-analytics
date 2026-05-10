@@ -2,7 +2,7 @@
 
 Maritime Performance Analytics evaluates vessel Speed Over Ground (SOG) under metocean conditions and quantifies the operational impact of wind-assisted propulsion (Flettner rotors), with emphasis on North Sea operations.
 
-## What Is Implemented
+## What is implemented
 
 This repository currently includes a complete notebook pipeline:
 
@@ -11,30 +11,37 @@ This repository currently includes a complete notebook pipeline:
 3. Voyage-based model training and evaluation
 4. Rotor what-if scenario simulation
 5. Weather-window comparison (baseline vs rotor-assisted)
+6. Four extension analyses (energy/fuel/CO₂, route segmentation, route optimisation, rotor gain detection)
 
-## Current Repository Structure
+## Current repository structure
 
 ```text
 maritime-performance-analytics/
 ├── data/
-│   ├── MasterSet.csv
-│   ├── MasterSet_features.csv
+│   ├── MasterSet.csv                        # AIS + ERA5 + Copernicus merged (not committed — large)
+│   ├── MasterSet_features.csv               # 57-column engineered feature set (not committed — large)
 │   ├── PositionReport_cleaned.csv
 │   └── PositionReport_final.csv
 ├── eda/
 │   ├── EDA.ipynb
 │   └── feature_engineering.ipynb
+├── extensions/
+│   ├── 01_energy_fuel_co2.ipynb             # Fuel consumption & CO₂ savings from rotor operation
+│   ├── 02_route_segmentation.ipynb          # Heading-based regime segmentation + per-regime models
+│   ├── 03_route_optimization.ipynb          # Dijkstra routing to maximise rotor gain
+│   └── 04_rotor_gain_detection.ipynb        # Wind-angle analysis & high-gain classifier
 ├── ml/
 │   └── baseline_model.ipynb
 ├── poc/
 │   ├── data_preprocessing.ipynb
 │   ├── interpolation.ipynb
 │   └── test_ERA5.ipynb
+├── results/                                 # PNG outputs from all notebooks
 ├── specification/
 └── README.md
 ```
 
-## Modeling Goal
+## Modeling goal
 
 Predict SOG as a function of forecast-available conditions and observed trajectory context.
 
@@ -46,7 +53,7 @@ Primary questions:
 - Under what conditions does rotor assistance improve operational performance?
 - Do rotors expand useful weather-window coverage?
 
-## Key Engineering Updates
+## Essential engineering updates
 
 Recent updates implemented in `eda/feature_engineering.ipynb` and consumed in `ml/baseline_model.ipynb`:
 
@@ -62,7 +69,7 @@ Recent updates implemented in `eda/feature_engineering.ipynb` and consumed in `m
 - Interaction features:
 	- wind-angle, apparent-wind-angle, wind-wave, nonlinear wind/wave terms
 
-## Leakage and Validation Rules
+## Validation rules
 
 The workflow now enforces:
 
@@ -76,7 +83,7 @@ The workflow now enforces:
 	- lagged nowcast model uses previous observed SOG and apparent-wind context for short-horizon prediction
 - Rotor contribution is applied post-prediction (scenario step), not as a training feature
 
-## Models and Current Results
+## Models and current results
 
 From the latest full run of `ml/baseline_model.ipynb`:
 
@@ -122,7 +129,7 @@ Interpretation note:
 - The strongest predictive signal in the nowcast model comes from lagged speed terms.
 - Weather-only features alone explain little test-set variance under the current formulation, so weather-impact interpretation should be treated separately from short-horizon prediction.
 
-## Rotor What-If and Weather Windows
+## Rotor what-if and weather windows
 
 Rotor scenario (latest run):
 - Rotor active share: 98.1%
@@ -150,11 +157,24 @@ Weather-window results:
 Note:
 - Fewer windows with higher coverage suggests many windows become longer/merged when rotor uplift is applied.
 
-## Known Caveat
+## Extensions
+
+Four optional extension notebooks in `extensions/` build on the baseline pipeline:
+
+| Notebook | Topic | Key output |
+|---|---|---|
+| `01_energy_fuel_co2.ipynb` | Fuel & CO₂ savings | Annual fuel reduction and CII delta from rotor operation |
+| `02_route_segmentation.ipynb` | Route segmentation | Per-regime (N/S/E/W) XGBoost models and rotor benefit by heading |
+| `03_route_optimization.ipynb` | Route optimisation | Dijkstra routing on 0.5° grid to maximise integrated rotor gain |
+| `04_rotor_gain_detection.ipynb` | Gain detection | Wind-angle polar analysis and binary classifier for high-gain moments |
+
+All extensions read from `data/MasterSet_features.csv` and use the same rotor polar diagram and voyage-based split as the baseline model.
+
+## Known caveat
 
 Current exported feature file `data/MasterSet_features.csv` includes `Course_deg` but does not currently export `course_sin` and `course_cos`. The model currently uses `Course_deg` directly.
 
-## How To Run
+## How to run
 
 Recommended notebook order:
 
@@ -163,12 +183,16 @@ Recommended notebook order:
 3. `poc/test_ERA5.ipynb`
 4. `eda/feature_engineering.ipynb`
 5. `ml/baseline_model.ipynb`
+6. `extensions/01_energy_fuel_co2.ipynb` *(optional)*
+7. `extensions/02_route_segmentation.ipynb` *(optional)*
+8. `extensions/03_route_optimization.ipynb` *(optional)*
+9. `extensions/04_rotor_gain_detection.ipynb` *(optional)*
 
 Environment notes:
 - Python libraries used include: `pandas`, `numpy`, `scikit-learn`, `xgboost`, `matplotlib`, `seaborn`, `scipy`, `openpyxl`
 - On macOS, XGBoost may require OpenMP runtime (`libomp`)
 
-## Data and Security Notice
+## Data and security notice
 
 This repository should contain only code, notebooks, and reproducible workflows.
 
