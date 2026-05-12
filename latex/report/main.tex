@@ -684,7 +684,7 @@ M2: XGBoost lagged nowcast & 0.406 & 0.758 & 0.839 & 91.7\% \\
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.78\textwidth]{predicted_vs_actual.png}
+    \includegraphics[width=1.0\textwidth]{predicted_vs_actual.png}
     \caption{Predicted versus actual \sog{} for the lagged nowcast model.}
 \end{figure}
 
@@ -698,7 +698,7 @@ that are not explicitly modelled.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.82\textwidth]{feature_importance.png}
+    \includegraphics[width=1.0\textwidth]{feature_importance.png}
     \caption{Feature importances for weather-only and lagged nowcast XGBoost
     models.}
 \end{figure}
@@ -735,7 +735,7 @@ wind, less favourable angle, or low rotor power.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.78\textwidth]{rotor_scenario.png}
+    \includegraphics[width=1.0\textwidth]{rotor_scenario.png}
     \caption{Rotor scenario distribution and per-voyage mean speed contribution.}
 \end{figure}
 
@@ -822,7 +822,7 @@ rotor route must be both windy in the right way and safe enough in waves.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.68\textwidth]{rotor_gain_surface.png}
+    \includegraphics[width=1.0\textwidth]{rotor_gain_surface.png}
     \caption{Environmental structure of the rotor-gain scenario.}
 \end{figure}
 
@@ -849,7 +849,7 @@ The three-year dataset summary is:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.78\textwidth]{energy_fuel_co2.png}
+    \includegraphics[width=1.0\textwidth]{energy_fuel_co2.png}
     \caption{Fuel and \co{} impact estimated from the rotor energy model.}
 \end{figure}
 
@@ -964,7 +964,7 @@ small.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.78\textwidth]{route_optimization.png}
+    \includegraphics[width=1.0\textwidth]{route_optimization.png}
     \caption{Dijkstra-based routing proof of concept for rotor-gain optimisation.}
 \end{figure}
 
@@ -1016,19 +1016,14 @@ and 113 degrees. This matches the rotor polar: beam and quartering winds are
 useful, while headwind and tailwind sectors are poor.
 
 \begin{figure}[H]
-    \centering
-    \begin{subfigure}{0.48\textwidth}
         \includegraphics[width=\textwidth]{rotor_decision_map.png}
         \caption{Rule-based high-gain zones.}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\textwidth}
-        \includegraphics[width=\textwidth]{rotor_classifier.png}
-        \caption{Classifier performance.}
-    \end{subfigure}
-    \caption{Operational detection of high-gain rotor conditions.}
 \end{figure}
 
+\begin{figure}
+        \includegraphics[width=\textwidth]{rotor_classifier.png}
+        \caption{Classifier performance.}
+\end{figure}
 An XGBoost classifier identifies high-gain moments with 99.8\% accuracy,
 99.4\% precision, 99.0\% recall, F1 = 0.992, and ROC-AUC = 1.000 on the
 notebook split. These very high metrics are plausible because the target is
