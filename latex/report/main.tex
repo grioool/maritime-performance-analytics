@@ -20,6 +20,12 @@
 \usepackage{placeins}
 
 \graphicspath{{../../results/}{../../specification/}{../img/}}
+\hypersetup{
+    pdftitle={Wind-Assisted Propulsion on North Sea Routes},
+    pdfauthor={Aleksandra Klos, Olga Grigorieva, Elen Mouradian, Bartosz Maj, Hubert Jaczynski},
+    pdfsubject={Maritime performance analytics for Flettner rotors},
+    pdfkeywords={wind-assisted propulsion, Flettner rotors, AIS, ERA5, Copernicus Marine, maritime analytics}
+}
 
 \setlength{\parskip}{0.38em}
 \setlength{\parindent}{0pt}
@@ -41,7 +47,7 @@
 \large Maritime Performance Analytics for Flettner Rotors}
 \author{Aleksandra K\l{}os \and Olga Grigorieva \and Elen Mouradian \and Bartosz Maj \and Hubert Jaczy\'nski}
 \date{DataWaves Innovation Laboratory \\
-Preliminary project report, May 2026}
+Conference submission, May 2026}
 
 \begin{document}
 \pagenumbering{gobble}
@@ -53,7 +59,7 @@ Preliminary project report, May 2026}
     \vspace{0.35cm}
     {\Large Maritime Performance Analytics for Flettner Rotors\par}
     \vspace{0.9cm}
-    {\large DataWaves Innovation Laboratory -- Preliminary project report\par}
+    {\large DataWaves Innovation Laboratory -- Conference submission\par}
     \vspace{0.25cm}
     {\large May 2026\par}
     \vspace{1.2cm}
@@ -74,7 +80,7 @@ Preliminary project report, May 2026}
 The project studies how wind, waves, currents, and vessel heading influence
 operational speed on North Sea routes, and whether Flettner rotors can improve
 voyage performance or enlarge useful weather windows. The work follows the
-advanced variant of the project card: AIS position reports were merged with ERA5
+advanced study brief: AIS position reports were merged with ERA5
 wind fields and Copernicus Marine sea-state/current variables
 \cite{hersbach2020era5,copernicusmarine}, transformed into trajectory-aware
 features, modelled with leakage-aware train/test splits, and used in a
@@ -98,15 +104,20 @@ wind context; it reaches MAE 0.406 \kn{}, RMSE 0.758 \kn{}, $R^2=0.839$, and
 
 The rotor scenario is deliberately applied after prediction rather than used as
 a training feature. Rotor power is estimated from the provided polar diagram and
-converted to a speed increment with the repository assumption
+converted to a speed increment with the scenario assumption
 200 \kw{} $\approx$ 1 \kn{} near the operating point. On the held-out test set,
 the rotor is active in 98.1\% of observations, with mean active rotor power
 41.2 \kw{}, mean active speed contribution 0.206 \kn{}, and overall mean
 contribution 0.202 \kn{}. Under the weather-window definition
-\sog{} $\geq 10$ \kn{} and \hs{} $\leq 3$ m, coverage increases from 76.0\% to
-77.5\%. The number of separate windows decreases from 866 to 808, while points
-inside windows increase by 529, suggesting that some marginal windows become
-longer and merge when rotor assistance is applied.
+\sog{} $\geq 10$ \kn{} and \hs{} $\leq 3$ m, coverage increases from 76.0\% in
+the baseline prediction to 77.5\% after adding the rotor scenario. The number
+of separate windows decreases from 866 to 808, while points inside windows
+increase by 529, suggesting that some marginal windows become longer and merge
+when rotor assistance is applied.
+
+Because the historical AIS period may already include rotor-assisted operation,
+the scenario should be read as a transparent rotor-opportunity estimate rather
+than as a measured causal before/after effect.
 
 The optional extensions add operational interpretation. The energy model
 estimates 112.2 t of fuel saved and 349.4 t \co{} avoided over the three-year
@@ -120,7 +131,7 @@ speeds above 8--12 \ms{} and beam-to-quartering apparent wind angles.
 
 \begin{table}[H]
 \centering
-\caption{Main quantitative outcomes from the current repository run.}
+\caption{Main quantitative outcomes from the analysis run.}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.33\textwidth}X}
 \toprule
 \textbf{Area} & \textbf{Current result} \\
@@ -129,8 +140,8 @@ Dataset & 125,160 observations, 528 voyages, 2023-02-02 to 2026-02-02. \\
 Validation & Chronological voyage split; 422 train voyages and 106 test voyages; no temporal leakage. \\
 Best speed model & XGBoost lagged nowcast: MAE 0.406 \kn{}, RMSE 0.758 \kn{}, $R^2=0.839$. \\
 Rotor speed uplift & Mean active $\Delta$\sog{} 0.206 \kn{}; overall mean $\Delta$\sog{} 0.202 \kn{}. \\
-Weather windows & Coverage 76.0\% without rotor and 77.5\% with rotor; +529 test observations inside windows. \\
-Fuel and emissions & 112.2 t fuel saved and 349.4 t \co{} avoided over the dataset; annualised 37.4 t fuel and 116.4 t \co{}. \\
+Weather windows & Coverage 76.0\% for the baseline prediction and 77.5\% after adding the rotor scenario; +529 test observations inside windows. \\
+Fuel and emissions & Scenario estimate of 112.2 t fuel saved and 349.4 t \co{} avoided over the dataset; annualised 37.4 t fuel and 116.4 t \co{}. \\
 High-gain moments & 11.9\% of observations have $\Delta$\sog{} $\geq 0.5$ \kn{}; classifier F1 = 0.992. \\
 \bottomrule
 \end{tabularx}
@@ -149,13 +160,13 @@ speed, and operational constraints. This conditionality is consistent with
 published route-based and ship-performance studies of Flettner rotors and other
 wind-assisted propulsion technologies \cite{traut2014flettner,lu2020wasp}.
 
-The project card defines the problem as an algorithmic analysis of vessel traces
+The study brief defines the problem as an algorithmic analysis of vessel traces
 and metocean conditions. The expected outputs are dependencies between
 environmental conditions and voyage parameters, a scenario comparison between
 baseline and rotor-assisted operation, and an assessment of weather windows for
 sailing. The advanced version asks for current/tide vectors, apparent wind
 calculation, rotor modelling, weather-window estimation, and uncertainty
-analysis. The repository implements each of these elements.
+analysis. The analysis implements each of these elements.
 
 The practical goal is not to build a final naval-architecture simulator. Instead,
 the goal is to create a transparent decision-support prototype that can answer
@@ -326,7 +337,7 @@ vessel trajectory into a supervised learning table. For each AIS observation the
 pipeline attaches the environmental state that the vessel experienced at that
 location and time.
 
-The repository separates this work across proof-of-concept interpolation,
+The workflow separates this work across proof-of-concept interpolation,
 ERA5-checking, exploratory-analysis, and feature-engineering notebooks. The
 resulting dataset spans 2023-02-02 to 2026-02-02 and covers 528 voyages.
 
@@ -459,14 +470,13 @@ The project uses three conceptual model families:
 
 The XGBoost implementation uses 300 estimators, maximum depth 6, learning rate
 0.05, 80\% row subsampling, 80\% column subsampling, and a fixed random seed.
-Features are standardised before model fitting in the current notebook
-implementation.
+Features are standardised before model fitting in the implementation.
 
 The model hierarchy is intentionally simple at the start. A constant mean model
 is not expected to be good, but it provides a useful reference point. If a more
 complex model cannot beat the average-speed baseline, then it has not extracted
 enough useful structure from the inputs. The linear model is the next step: it
-tests whether the project-card variables of wind, wave height, and relative
+tests whether the study-brief variables of wind, wave height, and relative
 angle provide a clear first-order signal. XGBoost is then used because tree
 ensembles can capture nonlinear thresholds and interactions, which are expected
 in maritime performance data \cite{xgboost2016}.
@@ -494,7 +504,7 @@ The report distinguishes two purposes that are easy to confuse:
 This separation matters for interpretation. A high-performing nowcast model can
 mostly learn persistence: ships tend to continue moving near their recent speed.
 That is useful operationally, but it does not by itself prove that weather
-features are strongly explanatory. The repository therefore reports both model
+features are strongly explanatory. The report therefore presents both model
 types and treats weather interpretation with caution.
 
 In practice, the two model types answer different user questions. The
@@ -537,35 +547,37 @@ is that it makes the scenario auditable: the rotor benefit can be traced back to
 the wind-speed/angle polar, wave-height gate, and a single power-to-speed
 conversion.
 
-The rotor model is best understood as a controlled comparison rather than a
-direct measurement. The historical AIS data represent actual vessel behaviour,
-but they do not provide a clean experimental switch that tells us exactly when
-the rotor was off and on under identical conditions. The project therefore
-builds a baseline prediction and then applies a consistent rotor contribution
-derived from the supplied polar relationship. This creates a repeatable
-baseline-versus-rotor comparison for the same rows.
+The rotor model is best understood as a controlled scenario rather than a direct
+measurement. The historical AIS data represent actual vessel behaviour, and the
+vessel may already have used its installed rotors whenever conditions allowed.
+They therefore do not provide a pure no-rotor counterfactual or a clean
+experimental switch that tells us exactly when the rotor was off and on under
+identical conditions. The project builds a baseline prediction from observed
+operations and then applies a consistent rotor-opportunity layer derived from
+the supplied polar relationship. This creates a repeatable baseline-plus-scenario
+comparison for the same rows.
 
 The conversion from rotor power to speed increment is deliberately simple. It
 does not replace a resistance and propulsion simulation. Instead, it provides an
 interpretable bridge between aerodynamic assistance and the speed-based
-questions in the project card. Because the assumption is visible, it can later
+questions in the study brief. Because the assumption is visible, it can later
 be replaced by a more detailed vessel model if engine curves, propeller
 efficiency, or measured rotor telemetry become available.
 
 \subsection{Weather-window definition}
 
-The main weather-window criterion follows the project card:
+The main weather-window criterion follows the study brief:
 
 \[
 \sog \geq 10 \kn \quad \mathrm{and} \quad H_s \leq 3 \mathrm{\ m}.
 \]
 
-For every test-set observation the pipeline compares a baseline prediction
-against a rotor-assisted prediction. Contiguous observations satisfying the
-criterion form weather windows. The report tracks both the number of windows and
-the number/share of observations inside windows. Counting both is important:
-the rotor can reduce the number of separate windows if neighbouring windows
-merge into longer continuous periods.
+For every test-set observation the pipeline compares a baseline prediction with
+the same prediction after the rotor scenario layer is added. Contiguous
+observations satisfying the criterion form weather windows. The report tracks
+both the number of windows and the number/share of observations inside windows.
+Counting both is important: the scenario can reduce the number of separate
+windows if neighbouring windows merge into longer continuous periods.
 
 The chosen weather-window definition is not the only possible operational
 definition, but it is easy to communicate. It combines a performance threshold
@@ -749,7 +761,7 @@ contribution is at least 0.5 \kn{}.
 
 \subsection{Weather-window impact}
 
-The weather-window analysis evaluates whether rotor assistance helps maintain
+The weather-window analysis evaluates whether the rotor scenario helps maintain
 the criterion \sog{} $\geq 10$ \kn{} and \hs{} $\leq 3$ m. The result is:
 
 \begin{table}[H]
@@ -759,15 +771,15 @@ the criterion \sog{} $\geq 10$ \kn{} and \hs{} $\leq 3$ m. The result is:
 \toprule
 \textbf{Scenario} & \textbf{Windows} & \textbf{Points in window} & \textbf{Coverage} \\
 \midrule
-Without rotor & 866 & 27,167 & 76.0\% \\
-With rotor & 808 & 27,696 & 77.5\% \\
+Baseline prediction & 866 & 27,167 & 76.0\% \\
+Baseline + rotor scenario & 808 & 27,696 & 77.5\% \\
 Delta & -58 & +529 & +1.5 percentage points \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The decrease in the number of windows should not be read as a negative result.
-When rotor assistance lifts speed above the threshold between two favourable
+When the rotor scenario lifts speed above the threshold between two favourable
 periods, separate windows can merge. The more relevant operational result is
 that the number of points inside the window increases and total coverage rises.
 
@@ -829,8 +841,8 @@ The three-year dataset summary is:
     \item Rotor active share: 97.6\%.
     \item Mean brake power: 3,887 \kw{}.
     \item Mean rotor power when active: 40.4 \kw{}.
-    \item Total fuel baseline: 11,066.7 t.
-    \item Total fuel with rotor: 10,954.4 t.
+    \item Total fuel, baseline estimate: 11,066.7 t.
+    \item Total fuel, rotor-scenario estimate: 10,954.4 t.
     \item Fuel saved: 112.2 t, or 1.01\%.
     \item \co{} saved: 349.4 t, or 1.01\%.
 \end{itemize}
@@ -848,9 +860,10 @@ estimate improves from 53.75 to 53.20 g \co{}/(t nm), a 1.01\% improvement.
 The conclusion is that the average annual energy impact is modest for one rotor,
 but it is measurable and directionally useful. The result should be interpreted
 as an order-of-magnitude scenario rather than a guaranteed vessel-performance
-claim, because the model does not yet include detailed propeller curves, engine
-load-specific SFOC, hull fouling, loading condition, RPM control policy, or
-captain/charterer speed decisions.
+claim, because the historical data do not provide a clean no-rotor control and
+the model does not yet include detailed propeller curves, engine load-specific
+SFOC, hull fouling, loading condition, RPM control policy, or captain/charterer
+speed decisions.
 
 The energy extension is valuable because it translates a speed-oriented rotor
 scenario into fuel and emissions language. A small speed increment can be used
@@ -1093,9 +1106,9 @@ feature engineering, modelling, or scenario logic.
 The second assumption is that the rotor scenario should remain separate from the
 baseline speed model. This is a conservative design choice. It avoids training a
 model that silently mixes historical vessel behaviour with hypothetical rotor
-contribution. It also lets the same baseline prediction be compared with and
-without rotor assistance. That makes the difference easier to explain in the
-report and presentation.
+contribution. It also lets the same baseline prediction be compared before and
+after adding the rotor scenario. That makes the difference easier to explain in
+the report and presentation.
 
 The third assumption is that the results should be read as decision-support
 signals, not as certified performance guarantees. The project uses real
@@ -1152,9 +1165,11 @@ limited ceiling.
 
 The rotor scenario is another limitation. It is based on the supplied polar
 diagram and a transparent power-to-speed conversion, not on measured onboard
-rotor telemetry. This is acceptable for a what-if prototype, but future work
-should validate the scenario against measured rotor power, shaft power, fuel
-flow, or controlled before/after periods if such data become available.
+rotor telemetry. Because the historical period may already include rotor use,
+the baseline is not a certified no-rotor counterfactual. This is acceptable for
+a what-if prototype, but future work should validate the scenario against
+measured rotor power, shaft power, fuel flow, or controlled before/after periods
+if such data become available.
 
 The route-optimisation extension should also be expanded carefully. Optimising
 only for rotor gain can create routes that are not operationally optimal. A
@@ -1190,22 +1205,24 @@ operational variables.
 The central rotor finding is that the average benefit of one rotor is moderate
 but operationally relevant. Mean speed uplift is about 0.2 \kn{} across the test
 set, weather-window coverage increases by 1.5 percentage points, and the energy
-extension estimates about 37 t/year fuel saving and 116 t/year \co{} reduction.
-The most useful message is conditionality: the rotor is most valuable in a
-minority of high-gain moments, especially when wind is above roughly 8--12
-\ms{} and the apparent wind angle is near beam/quartering sectors.
+extension gives a scenario estimate of about 37 t/year fuel saving and
+116 t/year \co{} reduction. The most useful message is conditionality: the rotor
+is most valuable in a minority of high-gain moments, especially when wind is
+above roughly 8--12 \ms{} and the apparent wind angle is near beam/quartering
+sectors.
 
 
 \section{Transparency statement}
 \label{sec:transparency}
 
-This report was partly done with the assistance of generative AI tools. Mostly the paraphrasing and summarisation. 
-The AI was used to help condense and clarify the technical content, but all key findings, interpretations, 
-and conclusions were generated by the authors. 
-The AI did not have access to the raw data and did not make any modelling decisions. 
-The report was reviewed and edited by the authors to ensure accuracy and relevance.
+Generative AI tools were used for language polishing, paraphrasing, and
+summarisation. The authors performed the analysis, made the modelling and
+interpretation decisions, and reviewed the final text for accuracy and
+relevance. The tools did not have access to the raw data and did not make
+modelling decisions.
 
-\section{References}
+\phantomsection
+\addcontentsline{toc}{section}{References}
 \label{sec:references}
 
 \begin{thebibliography}{9}
