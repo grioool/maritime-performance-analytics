@@ -11,7 +11,7 @@ This repository currently includes a complete notebook pipeline:
 3. Voyage-based model training and evaluation
 4. Rotor what-if scenario simulation
 5. Weather-window comparison (baseline vs rotor-assisted)
-6. Four extension analyses (energy/fuel/CO₂, route segmentation, route optimisation, rotor gain detection)
+6. Five extension analyses (energy/fuel/CO₂, route segmentation, route optimisation, rotor gain detection, Monte Carlo routing)
 
 ## Current repository structure
 
@@ -29,7 +29,8 @@ maritime-performance-analytics/
 │   ├── 01_energy_fuel_co2.ipynb             # Fuel consumption & CO₂ savings from rotor operation
 │   ├── 02_route_segmentation.ipynb          # Heading-based regime segmentation + per-regime models
 │   ├── 03_route_optimization.ipynb          # Dijkstra routing to maximise rotor gain
-│   └── 04_rotor_gain_detection.ipynb        # Wind-angle analysis & high-gain classifier
+│   ├── 04_rotor_gain_detection.ipynb        # Wind-angle analysis & high-gain classifier
+│   └── 05_monte_carlo_routing.ipynb         # Uncertainty-aware routing with confidence intervals
 ├── ml/
 │   └── baseline_model.ipynb
 ├── poc/
@@ -159,7 +160,7 @@ Note:
 
 ## Extensions
 
-Four optional extension notebooks in `extensions/` build on the baseline pipeline:
+Five optional extension notebooks in `extensions/` build on the baseline pipeline:
 
 | Notebook | Topic | Key output |
 |---|---|---|
@@ -167,8 +168,9 @@ Four optional extension notebooks in `extensions/` build on the baseline pipelin
 | `02_route_segmentation.ipynb` | Route segmentation | Per-regime (N/S/E/W) XGBoost models and rotor benefit by heading |
 | `03_route_optimization.ipynb` | Route optimisation | Dijkstra routing on 0.5° grid to maximise integrated rotor gain |
 | `04_rotor_gain_detection.ipynb` | Gain detection | Wind-angle polar analysis and binary classifier for high-gain moments |
+| `05_monte_carlo_routing.ipynb` | Monte Carlo routing | Land-aware multi-leg weather-uncertainty route comparison with confidence intervals for fuel, CO₂, ETA, and rotor benefit |
 
-All extensions read from `data/MasterSet_features.csv` and use the same rotor polar diagram and voyage-based split as the baseline model.
+All extensions read from `data/MasterSet_features.csv` and use the same rotor polar diagram and voyage-based split as the baseline model. The Monte Carlo routing extension also includes a script entry point at `extensions/05_monte_carlo_routing.py` for reproducible terminal runs, splits voyages into sailing legs at likely stop gaps before optimising, compares against the original observed AIS route, and rejects graph edges that intersect a Natural Earth land mask when `data/geo/ne_10m_land.geojson` is available.
 
 ## Known caveat
 
@@ -187,6 +189,7 @@ Recommended notebook order:
 7. `extensions/02_route_segmentation.ipynb` *(optional)*
 8. `extensions/03_route_optimization.ipynb` *(optional)*
 9. `extensions/04_rotor_gain_detection.ipynb` *(optional)*
+10. `extensions/05_monte_carlo_routing.ipynb` *(optional)*
 
 Environment notes:
 - Python libraries used include: `pandas`, `numpy`, `scikit-learn`, `xgboost`, `matplotlib`, `seaborn`, `scipy`, `openpyxl`
