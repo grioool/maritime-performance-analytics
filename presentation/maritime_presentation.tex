@@ -115,7 +115,7 @@
 \end{column}
 \begin{column}{0.44\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.65\textheight, keepaspectratio]{Rotor_characteristics.png}
+\includegraphics[width=\columnwidth, height=0.75\textheight, keepaspectratio]{Rotor_characteristics.png}
 \end{column}
 \end{columns}
 \end{frame}
@@ -125,7 +125,7 @@
 \begin{columns}
 \begin{column}{0.52\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.65\textheight, keepaspectratio]{Vessel_specification.png}
+\includegraphics[width=\columnwidth, height=0.75\textheight, keepaspectratio]{Vessel_specification.png}
 \end{column}
 \begin{column}{0.44\textwidth}
 \footnotesize
@@ -152,7 +152,7 @@ All scenario values flow from a single set of consistent assumptions applied thr
 \begin{columns}
 \begin{column}{0.52\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.56\textheight, keepaspectratio]{all_trajectories_osm.png}
+\includegraphics[width=\columnwidth, height=0.66\textheight, keepaspectratio]{all_trajectories_osm.png}
 {\small North Sea AIS traces on OpenStreetMap basemap.}
 \end{column}
 \begin{column}{0.45\textwidth}
@@ -305,7 +305,7 @@ M1: XGB weather  & 1.468 & 1.883 & 0.010  & 41.7\% \\
 \end{column}
 \begin{column}{0.49\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.58\textheight, keepaspectratio]{predicted_vs_actual.png}
+\includegraphics[width=\columnwidth, height=0.68\textheight, keepaspectratio]{predicted_vs_actual.png}
 {\small M2 predicted vs.\ actual SOG (test set).}
 \end{column}
 \end{columns}
@@ -316,7 +316,7 @@ M1: XGB weather  & 1.468 & 1.883 & 0.010  & 41.7\% \\
 \begin{columns}
 \begin{column}{0.56\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.52\textheight, keepaspectratio]{feature_importance.png}
+\includegraphics[width=\columnwidth, height=0.72\textheight, keepaspectratio]{feature_importance.png}
 {\small Weather-only (left) and lagged nowcast (right) XGBoost importances.}
 \end{column}
 \begin{column}{0.41\textwidth}
@@ -344,7 +344,7 @@ Speed persistence is the main signal; weather effects need additional operationa
 \begin{columns}
 \begin{column}{0.54\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.54\textheight, keepaspectratio]{rotor_scenario.png}
+\includegraphics[width=\columnwidth, height=0.64\textheight, keepaspectratio]{rotor_scenario.png}
 {\small Rotor power distribution and per-voyage mean speed contribution.}
 \end{column}
 \begin{column}{0.43\textwidth}
@@ -384,7 +384,7 @@ Fewer but longer windows: rotor merges marginal periods. Coverage +529 test poin
 %------------------------
 \begin{frame}{Rotor gain surface: where does it help?}
 \centering
-\includegraphics[width=0.95\textwidth, height=0.56\textheight, keepaspectratio]{rotor_gain_surface.png}
+\includegraphics[width=0.99\textwidth, height=0.70\textheight, keepaspectratio]{rotor_gain_surface.png}
 
 {\small Gain concentrated at beam/quartering angles (50-130$^\circ$) above 8 m/s. Headwind/tailwind sectors poor. Sea state acts as a gate, not a gain driver.}
 
@@ -402,7 +402,7 @@ Rotor benefit is directional and speed-dependent - ``good wind'' is not enough; 
 \begin{columns}
 \begin{column}{0.55\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.55\textheight, keepaspectratio]{energy_fuel_co2.png}
+\includegraphics[width=\columnwidth, height=0.75\textheight, keepaspectratio]{energy_fuel_co2.png}
 {\small Fuel and CO$_2$ impact from the rotor energy model.}
 \end{column}
 \begin{column}{0.42\textwidth}
@@ -445,7 +445,7 @@ Cubic resistance model; scenario estimate, not certified trial. Order of magnitu
 \begin{columns}
 \begin{column}{0.54\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.55\textheight, keepaspectratio]{route_segmentation.png}
+\includegraphics[width=\columnwidth, height=0.75\textheight, keepaspectratio]{route_segmentation.png}
 {\small Route segmentation into N/E/S/W heading regimes.}
 \end{column}
 \begin{column}{0.43\textwidth}
@@ -483,7 +483,7 @@ Westbound legs benefit most - same vessel, different heading geometry creates di
 \begin{columns}
 \begin{column}{0.54\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.55\textheight, keepaspectratio]{route_optimization.png}
+\includegraphics[width=\columnwidth, height=0.75\textheight, keepaspectratio]{route_optimization.png}
 {\small Dijkstra grid-search routing for rotor-gain optimisation (Voyage 456).}
 \end{column}
 \begin{column}{0.43\textwidth}
@@ -515,12 +515,12 @@ Proof of method: grid is coarse, built from historical fields. Production use ne
 %------------------------
 \begin{frame}{Extension 4: High-gain moment detection}
 \begin{columns}
-\begin{column}{0.54\textwidth}
+\begin{column}{0.63\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.46\textheight, keepaspectratio]{rotor_gain_detection.png}
+\includegraphics[width=\columnwidth, height=0.72\textheight, keepaspectratio]{rotor_gain_detection.png}
 {\small Gain detection: high-gain ($\Delta$SOG $\geq 0.5$ kn) moment distribution.}
 \end{column}
-\begin{column}{0.43\textwidth}
+\begin{column}{0.34\textwidth}
 \scriptsize
 \textbf{High-gain moments} ($\Delta$SOG $\geq 0.5$ kn): 14,856 obs.\ = \textbf{11.9\%} of dataset. Median wind 11.5 m/s; median angle 82$^\circ$ (80\% between 50-113$^\circ$).
 
@@ -557,12 +557,12 @@ Only 12\% of moments are high-gain, but they carry the bulk of rotor value - pla
 %------------------------
 \begin{frame}{Extension 5: Monte Carlo routing under uncertainty}
 \begin{columns}
-\begin{column}{0.54\textwidth}
+\begin{column}{0.63\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.46\textheight, keepaspectratio]{monte_carlo_routing.png}
+\includegraphics[width=\columnwidth, height=0.72\textheight, keepaspectratio]{monte_carlo_routing.png}
 {\small Monte Carlo routing: 1,000 scenario samples for Voyage 364.}
 \end{column}
-\begin{column}{0.43\textwidth}
+\begin{column}{0.34\textwidth}
 \scriptsize
 \textbf{Voyage 364 - four route variants} (land-masked graph: 537 nodes, 3,784 edges)
 \begin{center}
@@ -653,7 +653,7 @@ Wind-assisted propulsion is an opportunity map, not a constant bonus. The projec
 %------------------------
 \begin{frame}[noframenumbering]{Appendix: prediction intervals (95\%)}
 \centering
-\includegraphics[width=0.88\textwidth, height=0.62\textheight, keepaspectratio]{prediction_intervals_95percent.png}
+\includegraphics[width=0.95\textwidth, height=0.72\textheight, keepaspectratio]{prediction_intervals_95percent.png}
 
 \vspace{0.1cm}
 {\small 95\% quantile-regression prediction intervals for the nowcast model. Mean width 3.161 kn; empirical coverage 96.5\% on the test set - slightly conservative but well calibrated.}
@@ -664,12 +664,12 @@ Wind-assisted propulsion is an opportunity map, not a constant bonus. The projec
 \begin{columns}
 \begin{column}{0.48\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.52\textheight, keepaspectratio]{rotor_polar.png}
+\includegraphics[width=\columnwidth, height=0.72\textheight, keepaspectratio]{rotor_polar.png}
 {\small Rotor polar gain diagram.}
 \end{column}
 \begin{column}{0.48\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.52\textheight, keepaspectratio]{rotor_seasonal.png}
+\includegraphics[width=\columnwidth, height=0.72\textheight, keepaspectratio]{rotor_seasonal.png}
 {\small Seasonal rotor gain variation. December best (59.8 kW), July worst (26.6 kW). Winter wind is stronger but wave risk is higher.}
 \end{column}
 \end{columns}
@@ -680,12 +680,12 @@ Wind-assisted propulsion is an opportunity map, not a constant bonus. The projec
 \begin{columns}
 \begin{column}{0.48\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.52\textheight, keepaspectratio]{rotor_opportunity_voyage501.png}
+\includegraphics[width=\columnwidth, height=0.72\textheight, keepaspectratio]{rotor_opportunity_voyage501.png}
 {\small Voyage 501: rotor opportunity map along the track.}
 \end{column}
 \begin{column}{0.48\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.52\textheight, keepaspectratio]{voyage_fuel_savings.png}
+\includegraphics[width=\columnwidth, height=0.72\textheight, keepaspectratio]{voyage_fuel_savings.png}
 {\small Per-voyage fuel savings distribution.}
 \end{column}
 \end{columns}
@@ -696,12 +696,12 @@ Wind-assisted propulsion is an opportunity map, not a constant bonus. The projec
 \begin{columns}
 \begin{column}{0.49\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.54\textheight, keepaspectratio]{rotor_decision_map.png}
+\includegraphics[width=\columnwidth, height=0.64\textheight, keepaspectratio]{rotor_decision_map.png}
 {\small Rule-based high-gain zones.}
 \end{column}
 \begin{column}{0.49\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.54\textheight, keepaspectratio]{rotor_classifier.png}
+\includegraphics[width=\columnwidth, height=0.64\textheight, keepaspectratio]{rotor_classifier.png}
 {\small XGBoost classifier confusion matrix and ROC.}
 \end{column}
 \end{columns}
@@ -710,7 +710,7 @@ Wind-assisted propulsion is an opportunity map, not a constant bonus. The projec
 %------------------------
 \begin{frame}[noframenumbering]{Appendix: rotor wave-height interaction}
 \centering
-\includegraphics[width=0.88\textwidth, height=0.62\textheight, keepaspectratio]{rotor_hs_interaction.png}
+\includegraphics[width=0.95\textwidth, height=0.72\textheight, keepaspectratio]{rotor_hs_interaction.png}
 
 \vspace{0.1cm}
 {\small Wave height interaction with rotor gain. $H_s$ primarily acts as an operational gate (rotor off above 6 m); it is not the main driver of gain magnitude. Wind angle and wind speed create the opportunity; sea state can remove it.}
@@ -721,12 +721,12 @@ Wind-assisted propulsion is an opportunity map, not a constant bonus. The projec
 \begin{columns}
 \begin{column}{0.49\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.54\textheight, keepaspectratio]{model_comparison.png}
+\includegraphics[width=\columnwidth, height=0.64\textheight, keepaspectratio]{model_comparison.png}
 {\small All four model MAE/RMSE/$R^2$ side-by-side.}
 \end{column}
 \begin{column}{0.49\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.54\textheight, keepaspectratio]{rotor_zone_analysis.png}
+\includegraphics[width=\columnwidth, height=0.64\textheight, keepaspectratio]{rotor_zone_analysis.png}
 {\small Rotor zone analysis across the study area.}
 \end{column}
 \end{columns}
