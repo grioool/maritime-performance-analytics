@@ -33,6 +33,8 @@ latex/report/*
 !latex/report/main.pdf
 !latex/report/small_main.tex
 !latex/report/small_main.pdf
+!latex/presentation/main.tex
+!latex/presentation/main.pdf
 
 # IDE
 .idea/
