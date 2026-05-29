@@ -1,4 +1,4 @@
-\documentclass[aspectratio=169]{beamer}
+\documentclass[aspectratio=169,10pt]{beamer}
 
 \usepackage{lmodern}
 \usepackage{hyperref}
@@ -8,6 +8,7 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{tabularx}
+\usepackage{etoolbox}
 \usetikzlibrary{positioning}
 
 \graphicspath{{../results/}{../specification/}}
@@ -26,21 +27,29 @@
 \setbeamercolor{block body}{bg=SoftPink,fg=DarkGray}
 
 \setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=0.65cm,text margin right=0.65cm}
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+\AtBeginEnvironment{itemize}{\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}\setlength{\parsep}{0pt}}
+\AtBeginEnvironment{enumerate}{\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}\setlength{\parsep}{0pt}}
 
 % ---------- Section divider helper ----------
 \newcommand{\sectiondivider}[4]{%
   % #1 part number  #2 part title  #3 presenter name  #4 slides covered
+  {%
+  \setbeamercolor{background canvas}{bg=DarkPink}
+  \setbeamercolor{normal text}{fg=white}
   \begin{frame}[plain]
-  \begin{tikzpicture}[remember picture, overlay]
-    \fill[DarkPink] (current page.south west) rectangle (current page.north east);
-    \node[anchor=north west, font=\Large\bfseries\color{SoftPink}]
-      at ([xshift=1.2cm, yshift=-1.0cm] current page.north west) {#1};
-    \node[anchor=center, font=\LARGE\bfseries\color{white}, text width=0.75\paperwidth, align=center]
-      at (current page.center) {#2};
-    \node[anchor=south, font=\small\color{white!70!DarkPink}]
-      at ([yshift=1.0cm] current page.south) {#4};
-  \end{tikzpicture}
+  \color{white}
+  \vfill
+  {\Large\bfseries\color{SoftPink}#1\par}
+  \vspace{0.45cm}
+  {\LARGE\bfseries #2\par}
+  \vfill
+  {\small\color{white!75}#4\par}
+  \vspace{0.45cm}
   \end{frame}
+  }%
 }
 
 \title{Wind-Assisted Propulsion on North Sea Routes\\
@@ -93,9 +102,9 @@
 \sectiondivider{Part I}{Background \& Data}{Aleksandra K\l{}os}{Project context $\cdot$ Vessel specification $\cdot$ Dataset}
 
 %------------------------
-\begin{frame}{Project context: why Flettner rotors?}
-\begin{columns}
-\begin{column}{0.52\textwidth}
+\begin{frame}[t]{Project context: why Flettner rotors?}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.50\textwidth}
 \footnotesize
 \textbf{The Magnus effect}
 \begin{itemize}
@@ -113,17 +122,17 @@
 \vspace{0.2cm}
 \textbf{Challenge}: benefit is \textit{conditional} on wind speed, angle, sea state, and vessel heading - not a constant uplift.
 \end{column}
-\begin{column}{0.44\textwidth}
+\begin{column}{0.42\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.75\textheight, keepaspectratio]{Rotor_characteristics.png}
+\includegraphics[width=0.90\columnwidth, height=0.65\textheight, keepaspectratio]{Rotor_characteristics.png}
 \end{column}
 \end{columns}
 \end{frame}
 
 %------------------------
-\begin{frame}{Vessel and rotor specification}
-\begin{columns}
-\begin{column}{0.52\textwidth}
+\begin{frame}[t]{Vessel and rotor specification}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.46\textwidth}
 \centering
 \includegraphics[width=\columnwidth, height=0.75\textheight, keepaspectratio]{Vessel_specification.png}
 \end{column}
@@ -148,12 +157,17 @@ All scenario values flow from a single set of consistent assumptions applied thr
 \end{frame}
 
 %------------------------
-\begin{frame}{Data sources and trajectories}
-\begin{columns}
+\begin{frame}[t]{Data sources and trajectories}
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.52\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.66\textheight, keepaspectratio]{all_trajectories_osm.png}
-{\small North Sea AIS traces on OpenStreetMap basemap.}
+\begin{minipage}[t][0.72\textheight][t]{\columnwidth}
+\centering
+\vfill
+\includegraphics[width=\columnwidth, height=0.7\textheight, keepaspectratio]{all_trajectories_osm.png}
+\vfill
+{\small North Sea AIS traces on\\OpenStreetMap basemap.}
+\end{minipage}
 \end{column}
 \begin{column}{0.45\textwidth}
 \footnotesize
@@ -192,8 +206,8 @@ Spatio-temporal interpolation attaches metocean state to each AIS observation.
 \sectiondivider{Part II}{Methodology \& Models}{Olga Grigorieva}{Feature engineering $\cdot$ Model hierarchy $\cdot$ Speed prediction results}
 
 %------------------------
-\begin{frame}{Feature engineering: leakage-aware design}
-\begin{columns}
+\begin{frame}[t]{Feature engineering: leakage-aware design}
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.50\textwidth}
 \footnotesize
 \textbf{Feature groups}
@@ -224,8 +238,8 @@ Weather-only and lagged nowcast models use \emph{disjoint} feature sets - explan
 \end{frame}
 
 %------------------------
-\begin{frame}{Model hierarchy and rotor scenario methodology}
-\begin{columns}
+\begin{frame}[t]{Model hierarchy and rotor scenario methodology}
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.50\textwidth}
 \footnotesize
 \textbf{Four model levels for SOG prediction}
@@ -276,8 +290,8 @@ Rotor is a scenario overlay, not a training feature - baseline and rotor-assiste
 % ============================================================
 
 %------------------------
-\begin{frame}{Model results: held-out test performance}
-\begin{columns}
+\begin{frame}[t]{Model results: held-out test performance}
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.48\textwidth}
 {\scriptsize\setlength\tabcolsep{3.5pt}
 \begin{center}
@@ -312,8 +326,8 @@ M1: XGB weather  & 1.468 & 1.883 & 0.010  & 41.7\% \\
 \end{frame}
 
 %------------------------
-\begin{frame}{Feature importance and prediction intervals}
-\begin{columns}
+\begin{frame}[t]{Feature importance and prediction intervals}
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.56\textwidth}
 \centering
 \includegraphics[width=\columnwidth, height=0.72\textheight, keepaspectratio]{feature_importance.png}
@@ -340,8 +354,8 @@ Speed persistence is the main signal; weather effects need additional operationa
 \sectiondivider{Part III}{Rotor Performance}{Elen Mouradian}{Speed uplift $\cdot$ Weather windows $\cdot$ Gain surface $\cdot$ Energy \& CO\textsubscript{2}}
 
 %------------------------
-\begin{frame}{Rotor scenario: speed uplift and weather-window impact}
-\begin{columns}
+\begin{frame}[t]{Rotor scenario: speed uplift and weather-window impact}
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.54\textwidth}
 \centering
 \includegraphics[width=\columnwidth, height=0.64\textheight, keepaspectratio]{rotor_scenario.png}
@@ -382,11 +396,11 @@ Fewer but longer windows: rotor merges marginal periods. Coverage +529 test poin
 \end{frame}
 
 %------------------------
-\begin{frame}{Rotor gain surface: where does it help?}
+\begin{frame}[t]{Rotor gain surface: where does it help?}
 \centering
-\includegraphics[width=0.99\textwidth, height=0.70\textheight, keepaspectratio]{rotor_gain_surface.png}
+\includegraphics[width=0.90\textwidth, height=0.50\textheight, keepaspectratio]{rotor_gain_surface.png}
 
-{\small Gain concentrated at beam/quartering angles (50-130$^\circ$) above 8 m/s. Headwind/tailwind sectors poor. Sea state acts as a gate, not a gain driver.}
+{\scriptsize Gain concentrated at beam/quartering angles (50-130$^\circ$) above 8 m/s. Headwind/tailwind sectors poor. Sea state acts as a gate, not a gain driver.}
 
 \begin{block}{Key takeaway}
 Rotor benefit is directional and speed-dependent - ``good wind'' is not enough; the angle must be right.
@@ -398,8 +412,8 @@ Rotor benefit is directional and speed-dependent - ``good wind'' is not enough; 
 % ============================================================
 
 %------------------------
-\begin{frame}{Extension 1: Energy, fuel, and CO$_2$ impact}
-\begin{columns}
+\begin{frame}[t]{Extension 1: Energy, fuel, and CO$_2$ impact}
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.55\textwidth}
 \centering
 \includegraphics[width=\columnwidth, height=0.75\textheight, keepaspectratio]{energy_fuel_co2.png}
@@ -441,11 +455,11 @@ Cubic resistance model; scenario estimate, not certified trial. Order of magnitu
 \sectiondivider{Part IV}{Route Intelligence}{Bartosz Maj}{Route segmentation $\cdot$ Dijkstra optimisation $\cdot$ High-gain detection}
 
 %------------------------
-\begin{frame}{Extension 2: Route segmentation by heading regime}
-\begin{columns}
+\begin{frame}[t]{Extension 2: Route segmentation by heading regime}
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.54\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.75\textheight, keepaspectratio]{route_segmentation.png}
+\includegraphics[width=\columnwidth, height=0.62\textheight, keepaspectratio]{route_segmentation.png}
 {\small Route segmentation into N/E/S/W heading regimes.}
 \end{column}
 \begin{column}{0.43\textwidth}
@@ -479,8 +493,8 @@ Westbound legs benefit most - same vessel, different heading geometry creates di
 \end{frame}
 
 %------------------------
-\begin{frame}{Extension 3: Route optimisation - Dijkstra proof of concept}
-\begin{columns}
+\begin{frame}[t]{Extension 3: Route optimisation - Dijkstra proof of concept}
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.54\textwidth}
 \centering
 \includegraphics[width=\columnwidth, height=0.75\textheight, keepaspectratio]{route_optimization.png}
@@ -513,14 +527,14 @@ Proof of method: grid is coarse, built from historical fields. Production use ne
 \end{frame}
 
 %------------------------
-\begin{frame}{Extension 4: High-gain moment detection}
-\begin{columns}
-\begin{column}{0.63\textwidth}
+\begin{frame}[t]{Extension 4: High-gain moment detection}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.56\textwidth}
 \centering
 \includegraphics[width=\columnwidth, height=0.72\textheight, keepaspectratio]{rotor_gain_detection.png}
 {\small Gain detection: high-gain ($\Delta$SOG $\geq 0.5$ kn) moment distribution.}
 \end{column}
-\begin{column}{0.34\textwidth}
+\begin{column}{0.36\textwidth}
 \scriptsize
 \textbf{High-gain moments} ($\Delta$SOG $\geq 0.5$ kn): 14,856 obs.\ = \textbf{11.9\%} of dataset. Median wind 11.5 m/s; median angle 82$^\circ$ (80\% between 50-113$^\circ$).
 
@@ -555,14 +569,14 @@ Only 12\% of moments are high-gain, but they carry the bulk of rotor value - pla
 \sectiondivider{Part V}{Uncertainty \& Conclusions}{Hubert Jaczy\'nski}{Monte Carlo routing $\cdot$ Key findings $\cdot$ Operational takeaways}
 
 %------------------------
-\begin{frame}{Extension 5: Monte Carlo routing under uncertainty}
-\begin{columns}
-\begin{column}{0.63\textwidth}
+\begin{frame}[t]{Extension 5: Monte Carlo routing under uncertainty}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.52\textwidth}
 \centering
-\includegraphics[width=\columnwidth, height=0.72\textheight, keepaspectratio]{monte_carlo_routing.png}
+\includegraphics[width=0.88\columnwidth, height=0.9\textheight, keepaspectratio]{monte_carlo_routing.png}
 {\small Monte Carlo routing: 1,000 scenario samples for Voyage 364.}
 \end{column}
-\begin{column}{0.34\textwidth}
+\begin{column}{0.46\textwidth}
 \scriptsize
 \textbf{Voyage 364 - four route variants} (land-masked graph: 537 nodes, 3,784 edges)
 \begin{center}
@@ -586,7 +600,7 @@ Scenario upper bd & 46.75 & \textbf{1.70} \\
 \end{itemize}
 
 \begin{block}{Key takeaway}
-Uncertainty-aware routing outperforms greedy shortest path under rotor-gain objective.
+Uncertainty-aware routing beats greedy shortest path under the rotor-gain objective.
 \end{block}
 \end{column}
 \end{columns}
@@ -597,9 +611,9 @@ Uncertainty-aware routing outperforms greedy shortest path under rotor-gain obje
 % ============================================================
 
 %------------------------
-\begin{frame}{Conclusion}
-\footnotesize
-\begin{columns}
+\begin{frame}[t]{Conclusion}
+\scriptsize
+\begin{columns}[T,onlytextwidth]
 \begin{column}{0.50\textwidth}
 \textbf{Modelling}
 \begin{itemize}
