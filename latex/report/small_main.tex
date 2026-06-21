@@ -115,7 +115,10 @@ largest weather-window coverage increase. Route optimisation demonstrates a
 Dijkstra grid-routing proof of concept for rotor gain. Gain detection shows that
 only 11.9\% of observations are high-gain moments, but those moments carry a
 large share of the total benefit; high gain is associated mainly with wind
-speeds above 8--12 \ms{} and beam-to-quartering apparent wind angles.
+speeds above 8--12 \ms{} and beam-to-quartering apparent wind angles. The latest
+Monte Carlo routing extension adds uncertainty-aware route comparison: for
+Voyage 364, the expected-cost route lowers mean rotor-assisted fuel from
+50.72 t on the observed route to 47.81 t under sampled metocean scenarios.
 
 \begin{table}[H]
 \centering
@@ -131,6 +134,7 @@ Rotor speed uplift & Mean active $\Delta$\sog{} 0.206 \kn{}; overall mean $\Delt
 Weather windows & Coverage 76.0\% without rotor and 77.5\% with rotor; +529 test observations inside windows. \\
 Fuel and emissions & 112.2 t fuel saved and 349.4 t \co{} avoided over the dataset; annualised 37.4 t fuel and 116.4 t \co{}. \\
 High-gain moments & 11.9\% of observations have $\Delta$\sog{} $\geq 0.5$ \kn{}; classifier F1 = 0.992. \\
+Monte Carlo routing & Expected-cost route for Voyage 364: 47.81 t mean rotor-assisted fuel and 85.6\% probability of beating the shortest feasible route. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -167,8 +171,8 @@ questions such as:
     meaningful operational gain?
     \item Do rotors increase the fraction of time in which a voyage satisfies a
     useful weather-window criterion?
-    \item Can energy, \co{}, route segmentation, and routing analyses be built
-    consistently on top of the same feature set?
+    \item Can energy, \co{}, route segmentation, routing, and uncertainty
+    analyses be built consistently on top of the same feature set?
 \end{itemize}
 
 
@@ -643,6 +647,67 @@ is between 40 and 140 degrees, mark high gain. This rule reaches 95.8\% recall,
 69.7\% precision, and 94.2\% accuracy. For operations, the rule is attractive
 because it is easy to explain and can be applied to forecasts.
 
+\section{Monte Carlo routing extension}
+
+The latest extension turns route optimisation into an uncertainty-aware routing
+problem. Instead of choosing a route under one averaged weather condition, the
+notebook samples many plausible metocean scenarios for each graph edge from the
+historical feature table. The sample is empirical: records are grouped into
+0.7 degree spatial cells, the voyage month plus or minus one month is preferred
+to preserve seasonality, and fallback pools are used when the local cell has too
+few observations. Each sample contains true wind speed, wind direction,
+significant wave height \hs{}, and eastward and northward current components
+\texttt{uo} and \texttt{vo}.
+
+The reference case is Voyage 364. The observed itinerary is split into four
+sailing legs using stop gaps longer than two hours, so the optimisation keeps
+the voyage structure instead of replacing it with one unrealistic direct line.
+The route area is converted into a navigable sea graph with 0.35 degree grid
+spacing. Nodes are kept near historically observed AIS water corridors, edges
+connect neighbouring cells in eight directions, and feasibility filters remove
+nodes or edges that are too far from observed water traffic or cross land under
+the Natural Earth land mask. The current graph has 537 nodes, 3,784 edges, and
+132 AIS-corridor override edges for near-port movements.
+
+Each edge is evaluated under every sampled scenario. Current is projected onto
+the route course, wave height applies a speed penalty above a calm-water
+threshold, rotor power is estimated from the same polar-based scenario used in
+the rest of the project, and the resulting assisted speed is converted into
+fuel and \co{} with the simplified energy model. This gives each edge a
+distribution of possible costs rather than one deterministic cost.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{monte_carlo_routing.png}
+    \caption{Monte Carlo route comparison for Voyage 364 under sampled metocean uncertainty.}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Monte Carlo route comparison for Voyage 364.}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.27\textwidth}rrrr}
+\toprule
+\textbf{Route} & \textbf{Distance [nm]} & \textbf{Mean fuel [t]} & \textbf{Fuel saved [t]} & \textbf{Beats shortest} \\
+\midrule
+Original observed & 863.57 & 50.72 & 0.88 & 0.0\% \\
+Shortest feasible & 834.07 & 48.47 & 0.86 & 0.0\% \\
+Expected-cost MC & 847.89 & 47.81 & 1.22 & 85.6\% \\
+Risk-aware MC & 847.89 & 47.81 & 1.22 & 85.6\% \\
+Scenario-optimal bound & 860.88 & 46.75 & 1.70 & 100.0\% \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The main operational result is that the shortest feasible route is not the best
+route under the sampled fuel objective. The expected-cost Monte Carlo route
+accepts a small distance increase in exchange for more favourable assisted
+propulsion conditions and beats the shortest feasible route in 85.6\% of
+samples. The risk-aware route is the same path in the current run, meaning the
+chosen risk penalty does not change the optimum. The scenario-optimal bound is
+not a deployable recommendation; it is an optimistic benchmark where each
+sample is allowed to choose its best route after the weather is known.
+
 
 
 \section{Conclusions}
@@ -652,7 +717,9 @@ maritime analytics prototype. AIS trajectories are enriched with wind, waves,
 and currents; leakage-aware models are trained and evaluated by voyage; rotor
 assistance is simulated as a transparent what-if layer; and the results are
 translated into weather windows, fuel, emissions, route regimes, routing, and
-high-gain operational rules.
+high-gain operational rules. The Monte Carlo extension adds uncertainty-aware
+route comparison, so the routing result can be discussed as a distribution of
+possible outcomes rather than a single deterministic path.
 
 The central technical finding is that recent vessel speed is the strongest
 predictor of near-term speed. The lagged nowcast model reaches MAE 0.406 \kn{}
@@ -668,6 +735,11 @@ extension estimates about 37 t/year fuel saving and 116 t/year \co{} reduction.
 The most useful message is conditionality: the rotor is most valuable in a
 minority of high-gain moments, especially when wind is above roughly 8--12
 \ms{} and the apparent wind angle is near beam/quartering sectors.
+
+At route level, the Monte Carlo result reinforces the same point. The best route
+is not necessarily the shortest route; it is the route that performs well across
+sampled wind, wave, and current conditions while respecting the observed
+itinerary and navigable corridor constraints.
 
 
 \section{Transparency statement}

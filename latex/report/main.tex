@@ -46,8 +46,8 @@
 \title{\textbf{Wind-Assisted Propulsion on North Sea Routes}\\
 \large Maritime Performance Analytics for Flettner Rotors}
 \author{Aleksandra K\l{}os \and Olga Grigorieva \and Elen Mouradian \and Bartosz Maj \and Hubert Jaczy\'nski}
-\date{DataWaves Innovation Laboratory \\
-Conference submission, May 2026}
+\date{University project report \\
+May 2026}
 
 \begin{document}
 \pagenumbering{gobble}
@@ -59,7 +59,7 @@ Conference submission, May 2026}
     \vspace{0.35cm}
     {\Large Maritime Performance Analytics for Flettner Rotors\par}
     \vspace{0.9cm}
-    {\large DataWaves Innovation Laboratory -- Conference submission\par}
+    {\large University project report\par}
     \vspace{0.25cm}
     {\large May 2026\par}
     \vspace{1.2cm}
@@ -80,7 +80,7 @@ Conference submission, May 2026}
 The project studies how wind, waves, currents, and vessel heading influence
 operational speed on North Sea routes, and whether Flettner rotors can improve
 voyage performance or enlarge useful weather windows. The work follows the
-advanced study brief: AIS position reports were merged with ERA5
+extended university project scope: AIS position reports were merged with ERA5
 wind fields and Copernicus Marine sea-state/current variables
 \cite{hersbach2020era5,copernicusmarine}, transformed into trajectory-aware
 features, modelled with leakage-aware train/test splits, and used in a
@@ -127,7 +127,11 @@ largest weather-window coverage increase. Route optimisation demonstrates a
 Dijkstra grid-routing proof of concept for rotor gain. Gain detection shows that
 only 11.9\% of observations are high-gain moments, but those moments carry a
 large share of the total benefit; high gain is associated mainly with wind
-speeds above 8--12 \ms{} and beam-to-quartering apparent wind angles.
+speeds above 8--12 \ms{} and beam-to-quartering apparent wind angles. The latest
+Monte Carlo routing extension adds uncertainty-aware route comparison: for
+Voyage 364, the expected-cost route lowers mean rotor-assisted fuel from
+50.72 t on the observed route to 47.81 t under the sampled metocean scenarios,
+and beats the shortest feasible route in 85.6\% of samples.
 
 \begin{table}[H]
 \centering
@@ -143,6 +147,7 @@ Rotor speed uplift & Mean active $\Delta$\sog{} 0.206 \kn{}; overall mean $\Delt
 Weather windows & Coverage 76.0\% for the baseline prediction and 77.5\% after adding the rotor scenario; +529 test observations inside windows. \\
 Fuel and emissions & Scenario estimate of 112.2 t fuel saved and 349.4 t \co{} avoided over the dataset; annualised 37.4 t fuel and 116.4 t \co{}. \\
 High-gain moments & 11.9\% of observations have $\Delta$\sog{} $\geq 0.5$ \kn{}; classifier F1 = 0.992. \\
+Monte Carlo routing & Expected-cost route for Voyage 364: 47.81 t mean rotor-assisted fuel, 46.97--48.64 t 5--95\% interval, and 85.6\% probability of beating the shortest feasible route. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -160,13 +165,13 @@ speed, and operational constraints. This conditionality is consistent with
 published route-based and ship-performance studies of Flettner rotors and other
 wind-assisted propulsion technologies \cite{traut2014flettner,lu2020wasp}.
 
-The study brief defines the problem as an algorithmic analysis of vessel traces
-and metocean conditions. The expected outputs are dependencies between
+The university project frames the problem as an algorithmic analysis of vessel
+traces and metocean conditions. The expected outputs are dependencies between
 environmental conditions and voyage parameters, a scenario comparison between
 baseline and rotor-assisted operation, and an assessment of weather windows for
-sailing. The advanced version asks for current/tide vectors, apparent wind
+sailing. The extended analysis includes current/tide vectors, apparent wind
 calculation, rotor modelling, weather-window estimation, and uncertainty
-analysis. The analysis implements each of these elements.
+analysis.
 
 The practical goal is not to build a final naval-architecture simulator. Instead,
 the goal is to create a transparent decision-support prototype that can answer
@@ -181,8 +186,8 @@ questions such as:
     meaningful operational gain?
     \item Do rotors increase the fraction of time in which a voyage satisfies a
     useful weather-window criterion?
-    \item Can energy, \co{}, route segmentation, and routing analyses be built
-    consistently on top of the same feature set?
+    \item Can energy, \co{}, route segmentation, routing, and uncertainty
+    analyses be built consistently on top of the same feature set?
 \end{itemize}
 
 This framing is important because wind-assisted propulsion is not a single
@@ -476,7 +481,7 @@ The model hierarchy is intentionally simple at the start. A constant mean model
 is not expected to be good, but it provides a useful reference point. If a more
 complex model cannot beat the average-speed baseline, then it has not extracted
 enough useful structure from the inputs. The linear model is the next step: it
-tests whether the study-brief variables of wind, wave height, and relative
+tests whether the core project variables of wind, wave height, and relative
 angle provide a clear first-order signal. XGBoost is then used because tree
 ensembles can capture nonlinear thresholds and interactions, which are expected
 in maritime performance data \cite{xgboost2016}.
@@ -560,13 +565,13 @@ comparison for the same rows.
 The conversion from rotor power to speed increment is deliberately simple. It
 does not replace a resistance and propulsion simulation. Instead, it provides an
 interpretable bridge between aerodynamic assistance and the speed-based
-questions in the study brief. Because the assumption is visible, it can later
+questions in the project. Because the assumption is visible, it can later
 be replaced by a more detailed vessel model if engine curves, propeller
 efficiency, or measured rotor telemetry become available.
 
 \subsection{Weather-window definition}
 
-The main weather-window criterion follows the study brief:
+The main weather-window criterion follows the project specification:
 
 \[
 \sog \geq 10 \kn \quad \mathrm{and} \quad H_s \leq 3 \mathrm{\ m}.
@@ -825,8 +830,9 @@ rotor route must be both windy in the right way and safe enough in waves.
     \includegraphics[width=1.0\textwidth]{rotor_gain_surface.png}
     \caption{Environmental structure of the rotor-gain scenario.}
 \end{figure}
-
-\section{Energy, emissions, and CII extension}
+    
+\section{Extensions to the project}
+\subsection{Energy, emissions, and CII extension}
 
 The first extension converts rotor power into an energy and emissions impact.
 The ship model assumes 3,500 \kw{} at design speed 11.5 \kn{}, a cubic
@@ -887,7 +893,7 @@ as a complete decarbonisation solution. It is one operational lever that can
 contribute alongside routing, speed management, hull maintenance, and fuel
 choice.
 
-\section{Route segmentation extension}
+\subsection{Route segmentation extension}
 
 Route segmentation divides the data into heading regimes: northbound,
 eastbound, southbound, and westbound. This makes the analysis more interpretable
@@ -943,7 +949,7 @@ regimes. That does not mean westbound is always best for rotors. It means that,
 in this dataset and under the chosen threshold, westbound observations contain
 more marginal cases that the rotor scenario can move into the acceptable window.
 
-\section{Route optimisation extension}
+\subsection{Route optimisation extension}
 
 The route-optimisation extension explores whether route choice can increase the
 expected rotor benefit. The implemented proof of concept builds a coarse
@@ -997,7 +1003,7 @@ main theme: rotor benefit is conditional. A good decision-support tool should
 not simply search for the strongest wind; it should search for useful wind under
 acceptable sea-state and route constraints.
 
-\section{Rotor gain detection extension}
+\subsection{Rotor gain detection extension}
 
 The gain-detection extension turns the rotor scenario into a classification and
 decision problem. A high-gain observation is defined as
@@ -1058,14 +1064,122 @@ This supports a nuanced conclusion: the rotor is not a universal speed boost,
 but it can be useful when the environmental geometry is right. That message is
 both technically honest and operationally practical.
 
+\subsection{Monte Carlo routing extension}
+
+The latest extension turns route optimisation into an uncertainty problem. The
+earlier routing notebook asks whether one deterministic path can improve rotor
+opportunity. The Monte Carlo notebook asks a stricter operational question:
+which route performs well across many plausible wind, wave, and current
+realisations, not only under one averaged condition?
+
+The reference case is Voyage 364. The notebook first reconstructs the observed
+itinerary and separates it into sailing legs using stop gaps longer than two
+hours. This preserves the port-call structure of the voyage: optimisation is
+performed leg by leg between observed itinerary points, rather than by allowing
+the algorithm to replace the voyage with one unrealistic direct line. In the
+current run the method detects four sailing legs and three stop gaps.
+
+The route area is converted into a navigable sea graph. Candidate nodes are
+placed on a coarse latitude-longitude grid with 0.35 degree spacing and kept
+only where they are close to historically observed AIS water corridors. Edges
+connect neighbouring grid cells in eight directions, with distance calculated
+by the haversine formula and course calculated from the start and end points.
+Several feasibility checks are then applied: edge midpoints must remain close
+to observed water traffic, diagonal moves cannot cut across unavailable
+orthogonal neighbours, and a Natural Earth land mask removes land-crossing
+edges. A small AIS-corridor override protects real near-port movements from
+being removed by an over-simple coastline mask. The current graph has 537 nodes,
+3,784 edges, and 132 AIS-corridor override edges.
+
+For every edge, the extension samples many plausible metocean scenarios from
+the historical feature table. This is empirical sampling rather than synthetic
+weather generation. Records are grouped into 0.7 degree spatial cells, and the
+preferred sample pool uses the voyage month plus or minus one month so that the
+draws remain seasonally realistic. If a local cell has too few observations,
+the sampler falls back to the nearest populated cell and then to the global
+seasonal sample. Each sampled scenario carries true wind speed, wind direction,
+significant wave height \hs{}, and the eastward and northward current
+components \texttt{uo} and \texttt{vo}. Sampling full historical records helps
+preserve realistic relationships between wind, waves, and currents.
+
+Each edge is then evaluated under each sampled scenario. Current is projected
+onto the edge course, wave height applies a speed penalty above a calm-water
+threshold, and rotor power is estimated from the same polar-based scenario used
+elsewhere in the project. The notebook converts the resulting assisted speed
+and propulsion load into fuel and \co{} using the same simplified energy model
+as the fuel extension. This produces a distribution of edge costs rather than a
+single deterministic edge cost.
+
+The notebook compares five route concepts:
+
+\begin{itemize}
+    \item Original observed route: the AIS path actually sailed, evaluated
+    under the same scenario model.
+    \item Shortest feasible route: graph route with minimum distance, ignoring
+    weather uncertainty except through feasibility filters.
+    \item Expected-cost Monte Carlo route: graph route minimising mean
+    rotor-assisted fuel across the sampled scenarios.
+    \item Risk-aware Monte Carlo route: graph route minimising mean fuel plus a
+    penalty for scenario-to-scenario fuel variability.
+    \item Scenario-optimal upper bound: an optimistic benchmark where each
+    scenario is allowed to choose its own best route after the weather is known.
+\end{itemize}
+
+The upper bound is especially important to explain correctly. It is not a
+deployable route recommendation, because it assumes perfect knowledge of the
+realised weather for every sampled scenario. Its value is diagnostic: it shows
+how much extra benefit could theoretically exist if uncertainty were removed.
+The gap between the expected-cost route and the upper bound is therefore a
+measure of remaining weather-routing value, not a promise that the upper-bound
+result can be achieved operationally.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{monte_carlo_routing.png}
+    \caption{Monte Carlo route comparison for Voyage 364 under sampled metocean uncertainty.}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Monte Carlo route comparison for Voyage 364.}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}rrrr}
+\toprule
+\textbf{Route} & \textbf{Distance [nm]} & \textbf{Mean fuel [t]} & \textbf{Fuel saved [t]} & \textbf{Beats shortest} \\
+\midrule
+Original observed & 863.57 & 50.72 & 0.88 & 0.0\% \\
+Shortest feasible & 834.07 & 48.47 & 0.86 & 0.0\% \\
+Expected-cost MC & 847.89 & 47.81 & 1.22 & 85.6\% \\
+Risk-aware MC & 847.89 & 47.81 & 1.22 & 85.6\% \\
+Scenario-optimal bound & 860.88 & 46.75 & 1.70 & 100.0\% \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The result shows why uncertainty-aware routing is useful. The shortest feasible
+route is shorter than the Monte Carlo route, but it is not the best route under
+the sampled fuel objective. The expected-cost route accepts a small distance
+increase in exchange for more favourable assisted propulsion conditions. In the
+current run the risk-aware route equals the expected-cost route, which means
+the variability penalty was not strong enough to change the chosen path. That is
+not a failure; it tells us that, under the chosen risk parameter, the same route
+is both low-mean-cost and sufficiently stable.
+
+The extension should still be presented as a decision-support prototype rather
+than a finished navigation system. The graph is coarse, the weather sampling is
+historical rather than a live ensemble forecast, and the land mask is not a
+nautical chart. Its value is methodological: it connects AIS corridors, route
+constraints, empirical metocean uncertainty, rotor physics, fuel, \co{}, ETA,
+and risk into one reproducible framework.
+
 \section{Implementation notes}
 
 The repository is organised as a reproducible notebook pipeline. The earlier
 notebooks prepare and inspect the merged data; the feature-engineering notebook
 creates target-safe variables; the baseline model notebook trains and evaluates
 the main speed models; the extension notebooks reuse the same feature table for
-energy, segmentation, routing, and gain detection. This structure is useful
-because it avoids creating separate, inconsistent datasets for each analysis.
+energy, segmentation, routing, gain detection, and Monte Carlo uncertainty
+routing.
 
 The most important implementation choice is that rotor variables are not used as
 ordinary model features for the main speed prediction. They are applied after
@@ -1108,10 +1222,10 @@ the report and presentation.
 The third assumption is that the results should be read as decision-support
 signals, not as certified performance guarantees. The project uses real
 trajectory and environmental data, but it does not yet include the full onboard
-instrumentation needed for a formal vessel-performance trial. For a competition
-prototype, the useful contribution is the workflow: it shows how to connect AIS,
-weather, machine learning, rotor physics, and operational metrics in one
-traceable analysis.
+instrumentation needed for a formal vessel-performance trial. For a university
+project report, the useful contribution is the workflow: it shows how to
+connect AIS, weather, machine learning, rotor physics, and operational metrics
+in one traceable analysis.
 
 These assumptions do not weaken the project if they are stated clearly. On the
 contrary, they make the results easier to trust because the reader can see the
@@ -1188,7 +1302,10 @@ maritime analytics prototype. AIS trajectories are enriched with wind, waves,
 and currents; leakage-aware models are trained and evaluated by voyage; rotor
 assistance is simulated as a transparent what-if layer; and the results are
 translated into weather windows, fuel, emissions, route regimes, routing, and
-high-gain operational rules.
+high-gain operational rules. The Monte Carlo extension adds the final missing
+decision-support layer by showing how routing choices change when weather and
+current uncertainty are represented as a distribution instead of a single
+average condition.
 
 The central technical finding is that recent vessel speed is the strongest
 predictor of near-term speed. The lagged nowcast model reaches MAE 0.406 \kn{}
@@ -1205,6 +1322,13 @@ extension gives a scenario estimate of about 37 t/year fuel saving and
 is most valuable in a minority of high-gain moments, especially when wind is
 above roughly 8--12 \ms{} and the apparent wind angle is near beam/quartering
 sectors.
+
+The Monte Carlo result reinforces the same message at route level. In Voyage
+364, the expected-cost route is not simply the shortest route; it is the route
+with the best mean fuel performance under sampled wind, wave, and current
+conditions. The scenario-optimal bound shows that additional routing value may
+exist if forecast certainty improves, while the gap to that bound keeps the
+claim realistic.
 
 
 \section{Transparency statement}
