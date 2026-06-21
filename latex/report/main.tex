@@ -475,7 +475,10 @@ The project uses three conceptual model families:
 
 The XGBoost implementation uses 300 estimators, maximum depth 6, learning rate
 0.05, 80\% row subsampling, 80\% column subsampling, and a fixed random seed.
-Features are standardised before model fitting in the implementation.
+These values were selected as a fixed manual configuration for reproducible
+course-project modelling rather than by a formal Optuna or GridSearch
+hyperparameter search. Features are standardised before model fitting in the
+implementation.
 
 The model hierarchy is intentionally simple at the start. A constant mean model
 is not expected to be good, but it provides a useful reference point. If a more
@@ -568,6 +571,12 @@ interpretable bridge between aerodynamic assistance and the speed-based
 questions in the project. Because the assumption is visible, it can later
 be replaced by a more detailed vessel model if engine curves, propeller
 efficiency, or measured rotor telemetry become available.
+
+A specific limitation is that this section applies a linear speed-offset
+surrogate, while the later energy extension converts speed and power through a
+cubic resistance relationship. The two calculations are therefore consistent as
+transparent scenario approximations, but they should not be read as a single
+fully coupled hydrodynamic model.
 
 \subsection{Weather-window definition}
 
@@ -670,6 +679,18 @@ the lagged nowcast model performs well. This suggests that the current dataset
 contains enough information for short-horizon prediction, but that weather-only
 speed prediction is limited by missing operational variables and by the
 complexity of vessel behaviour.
+
+There is also a useful modelling paradox in the comparison between B2 and M1:
+the linear weather baseline reaches $R^2=0.034$, while the weather-only XGBoost
+model reaches only $R^2=0.010$ on the same chronological test period. Because a
+linear model outperforms a more flexible gradient-boosted tree on this feature
+set, the likely explanation is not that the relationship is truly linear, but
+that the XGBoost model has fitted training-period structure that does not
+transfer to later voyages. In future iterations this should be tested with
+stricter regularisation, for example larger $L_1$/$L_2$ penalties
+(\texttt{reg\_alpha}, \texttt{reg\_lambda}), a larger
+\texttt{min\_child\_weight}, shallower trees, and validation by rolling or
+nested chronological splits.
 
 \begin{table}[H]
 \centering
@@ -1172,67 +1193,6 @@ nautical chart. Its value is methodological: it connects AIS corridors, route
 constraints, empirical metocean uncertainty, rotor physics, fuel, \co{}, ETA,
 and risk into one reproducible framework.
 
-\section{Implementation notes}
-
-The repository is organised as a reproducible notebook pipeline. The earlier
-notebooks prepare and inspect the merged data; the feature-engineering notebook
-creates target-safe variables; the baseline model notebook trains and evaluates
-the main speed models; the extension notebooks reuse the same feature table for
-energy, segmentation, routing, gain detection, and Monte Carlo uncertainty
-routing.
-
-The most important implementation choice is that rotor variables are not used as
-ordinary model features for the main speed prediction. They are applied after
-prediction as a scenario layer. This keeps the baseline model and the
-rotor-assisted scenario conceptually separate. If rotor contribution were mixed
-directly into the training features without a reliable ON/OFF label, it would be
-harder to explain what the model had actually learned.
-
-The notebooks also export figures to the \texttt{results/} directory, which
-allows the report to reference a stable set of outputs. This makes the report
-less dependent on notebook display state and easier to regenerate. A useful next
-engineering step would be to export the most important numerical summaries to a
-single compact CSV, so that the report, presentation, and any reviewer checks
-all draw from the same result table.
-
-\subsection{Assumptions kept consistent}
-
-The analysis depends on several simplifying assumptions. The most important
-point is that these assumptions are used consistently across the notebooks
-rather than changed from one extension to another. The rotor polar relationship
-is the same scenario utility used for speed uplift, fuel estimation, route
-opportunity, and high-gain classification. The voyage-based split is also kept
-as the validation principle for the main predictive comparisons. This gives the
-project a single analytical spine.
-
-The first assumption is that the merged AIS and metocean table is the common
-source of truth. All downstream models use the same temporal and spatial
-alignment. This reduces the chance that two notebooks tell different stories
-because they were built from slightly different data versions. It also makes
-debugging easier: if a result changes, the team can check whether it came from
-feature engineering, modelling, or scenario logic.
-
-The second assumption is that the rotor scenario should remain separate from the
-baseline speed model. This is a conservative design choice. It avoids training a
-model that silently mixes historical vessel behaviour with hypothetical rotor
-contribution. It also lets the same baseline prediction be compared before and
-after adding the rotor scenario. That makes the difference easier to explain in
-the report and presentation.
-
-The third assumption is that the results should be read as decision-support
-signals, not as certified performance guarantees. The project uses real
-trajectory and environmental data, but it does not yet include the full onboard
-instrumentation needed for a formal vessel-performance trial. For a university
-project report, the useful contribution is the workflow: it shows how to
-connect AIS, weather, machine learning, rotor physics, and operational metrics
-in one traceable analysis.
-
-These assumptions do not weaken the project if they are stated clearly. On the
-contrary, they make the results easier to trust because the reader can see the
-boundary between observed data, learned prediction, and simulated rotor effect.
-That boundary is important in maritime analytics, where operational decisions
-often depend as much on transparent reasoning as on raw model accuracy.
-
 \section{Practical interpretation}
 
 The practical interpretation of the project is that wind-assisted propulsion is
@@ -1339,6 +1299,70 @@ summarisation. The authors performed the analysis, made the modelling and
 interpretation decisions, and reviewed the final text for accuracy and
 relevance. The tools did not have access to the raw data and did not make
 modelling decisions.
+
+\appendix
+
+\section{Implementation notes}
+\label{app:implementation-notes}
+
+The repository is organised as a reproducible notebook pipeline. The earlier
+notebooks prepare and inspect the merged data; the feature-engineering notebook
+creates target-safe variables; the baseline model notebook trains and evaluates
+the main speed models; the extension notebooks reuse the same feature table for
+energy, segmentation, routing, gain detection, and Monte Carlo uncertainty
+routing.
+
+The most important implementation choice is that rotor variables are not used as
+ordinary model features for the main speed prediction. They are applied after
+prediction as a scenario layer. This keeps the baseline model and the
+rotor-assisted scenario conceptually separate. If rotor contribution were mixed
+directly into the training features without a reliable ON/OFF label, it would be
+harder to explain what the model had actually learned.
+
+The notebooks also export figures to the \texttt{results/} directory, which
+allows the report to reference a stable set of outputs. This makes the report
+less dependent on notebook display state and easier to regenerate. A useful next
+engineering step would be to export the most important numerical summaries to a
+single compact CSV, so that the report, presentation, and any reviewer checks
+all draw from the same result table.
+
+\subsection{Assumptions kept consistent}
+
+The analysis depends on several simplifying assumptions. The most important
+point is that these assumptions are used consistently across the notebooks
+rather than changed from one extension to another. The rotor polar relationship
+is the same scenario utility used for speed uplift, fuel estimation, route
+opportunity, and high-gain classification. The voyage-based split is also kept
+as the validation principle for the main predictive comparisons. This gives the
+project a single analytical spine.
+
+The first assumption is that the merged AIS and metocean table is the common
+source of truth. All downstream models use the same temporal and spatial
+alignment. This reduces the chance that two notebooks tell different stories
+because they were built from slightly different data versions. It also makes
+debugging easier: if a result changes, the team can check whether it came from
+feature engineering, modelling, or scenario logic.
+
+The second assumption is that the rotor scenario should remain separate from the
+baseline speed model. This is a conservative design choice. It avoids training a
+model that silently mixes historical vessel behaviour with hypothetical rotor
+contribution. It also lets the same baseline prediction be compared before and
+after adding the rotor scenario. That makes the difference easier to explain in
+the report and presentation.
+
+The third assumption is that the results should be read as decision-support
+signals, not as certified performance guarantees. The project uses real
+trajectory and environmental data, but it does not yet include the full onboard
+instrumentation needed for a formal vessel-performance trial. For a university
+project report, the useful contribution is the workflow: it shows how to
+connect AIS, weather, machine learning, rotor physics, and operational metrics
+in one traceable analysis.
+
+These assumptions do not weaken the project if they are stated clearly. On the
+contrary, they make the results easier to trust because the reader can see the
+boundary between observed data, learned prediction, and simulated rotor effect.
+That boundary is important in maritime analytics, where operational decisions
+often depend as much on transparent reasoning as on raw model accuracy.
 
 \phantomsection
 \addcontentsline{toc}{section}{References}
